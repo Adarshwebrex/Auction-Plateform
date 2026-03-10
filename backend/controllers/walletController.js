@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const WalletTx = require("../models/WalletTx");
 const WalletRequest = require("../models/WalletRequest");
+const AuditLog = require("../models/AuditLog");
 const { createNotification } = require("./notificationController");
 const { sendMail } = require("../config/mailer");
 
@@ -177,6 +178,76 @@ exports.withdraw = async (req, res) => {
     if (s && s.freezeWithdrawals) {
       return res.status(503).json({ message: "Withdrawals are temporarily frozen. Please try again later." });
     }
+    // Check ban window
+    if (req.user?.bannedUntil) {
+      const bannedUntilTs = new Date(req.user.bannedUntil).getTime();
+      if (Date.now() < bannedUntilTs) {
+        return res.status(403).json({ message: "Your account is temporarily restricted from withdrawals. Please try again later.", bannedUntil: req.user.bannedUntil });
+      } else {
+        // ban expired, clear and log
+        try {
+          const prev = await User.findById(userId).select("bannedUntil withdrawalViolationCount");
+          await User.findByIdAndUpdate(userId, { bannedUntil: null });
+          await AuditLog.create({
+            userId: req.user._id,
+            action: "update",
+            entityType: "user",
+            entityId: req.user._id,
+            before: { bannedUntil: prev?.bannedUntil },
+            after: { bannedUntil: null },
+            ip: (req.ip || ""),
+            userAgent: (req.headers["user-agent"] || ""),
+            route: req.originalUrl || "",
+            method: (req.method || "").toUpperCase(),
+          });
+          req.user.bannedUntil = null;
+        } catch (e) {}
+      }
+    }
+
+    // Per-day cap enforcement
+    const dailyCap = Number(s?.withdrawalDailyCap || 0);
+    if (dailyCap > 0) {
+      const dayStart = new Date();
+      dayStart.setHours(0, 0, 0, 0);
+      const agg = await WalletTx.aggregate([
+        { $match: { userId, type: "withdraw", createdAt: { $gte: dayStart } } },
+        { $group: { _id: null, total: { $sum: "$amount" } } },
+      ]);
+      const withdrawnToday = (agg && agg[0] && agg[0].total) ? Number(agg[0].total) : 0;
+      if (withdrawnToday + amount > dailyCap) {
+        // increment violation and possibly ban
+        const violationLimit = Math.max(1, Number(s?.withdrawalViolationLimit || 3));
+        const autoBanDays = Math.max(0, Number(s?.autoBanDurationDays || 7));
+        const u = await User.findById(userId).select("withdrawalViolationCount bannedUntil");
+        const nextCount = (u?.withdrawalViolationCount || 0) + 1;
+        const update = { withdrawalViolationCount: nextCount };
+        let willBanUntil = null;
+        if (autoBanDays > 0 && nextCount >= violationLimit) {
+          willBanUntil = new Date(Date.now() + autoBanDays * 24 * 60 * 60 * 1000);
+          update.bannedUntil = willBanUntil;
+        }
+        try {
+          await User.findByIdAndUpdate(userId, update);
+          if (willBanUntil) {
+            await AuditLog.create({
+              userId: req.user._id,
+              action: "update",
+              entityType: "user",
+              entityId: req.user._id,
+              before: { withdrawalViolationCount: u?.withdrawalViolationCount || 0, bannedUntil: u?.bannedUntil || null },
+              after: { withdrawalViolationCount: nextCount, bannedUntil: willBanUntil },
+              ip: (req.ip || ""),
+              userAgent: (req.headers["user-agent"] || ""),
+              route: req.originalUrl || "",
+              method: (req.method || "").toUpperCase(),
+            });
+          }
+        } catch (e) {}
+        const remaining = Math.max(0, dailyCap - withdrawnToday);
+        return res.status(400).json({ message: `Daily withdrawal cap reached. Remaining today: ₹${remaining.toLocaleString('en-IN')}` });
+      }
+    }
     const threshold = Number(s?.walletHighValueThreshold || HIGH_VALUE_THRESHOLD);
     const requireKYCForHighValue = !!s?.requireKYCForHighValue;
     const requireOTP = (amount > threshold) || !!s?.requireOTPForWithdrawals;
@@ -263,6 +334,31 @@ exports.userRequests = async (req, res) => {
     res.json(items);
   } catch (e) {
     res.status(500).json({ message: "Failed to load requests" });
+  }
+};
+
+// Lightweight limits endpoint: returns today's cap usage and ban status
+exports.limits = async (req, res) => {
+  try {
+    const userId = req.user && req.user._id;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const s = (req.app && req.app.locals && req.app.locals.settings) || {};
+    const dailyCap = Number(s?.withdrawalDailyCap || 0);
+    let withdrawnToday = 0;
+    if (dailyCap > 0) {
+      const dayStart = new Date();
+      dayStart.setHours(0, 0, 0, 0);
+      const agg = await WalletTx.aggregate([
+        { $match: { userId, type: "withdraw", createdAt: { $gte: dayStart } } },
+        { $group: { _id: null, total: { $sum: "$amount" } } },
+      ]);
+      withdrawnToday = (agg && agg[0] && agg[0].total) ? Number(agg[0].total) : 0;
+    }
+    const remaining = dailyCap > 0 ? Math.max(0, dailyCap - withdrawnToday) : null;
+    const bannedUntil = req.user?.bannedUntil || null;
+    return res.json({ dailyCap, withdrawnToday, remaining, bannedUntil });
+  } catch (e) {
+    return res.status(500).json({ message: "Failed to load limits" });
   }
 };
 

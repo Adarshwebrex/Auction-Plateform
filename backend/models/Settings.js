@@ -22,6 +22,10 @@ const settingsSchema = new mongoose.Schema(
     requireOTPForWithdrawals: { type: Boolean, default: false },
     // Panic mode: instantly freeze withdrawals
     freezeWithdrawals: { type: Boolean, default: false },
+    // Withdrawal risk controls
+    withdrawalDailyCap: { type: Number, default: 0 }, // 0 = unlimited
+    withdrawalViolationLimit: { type: Number, default: 3 },
+    autoBanDurationDays: { type: Number, default: 7 },
     // Anti-sniping and platform limits/support
     enableSnipingProtection: { type: Boolean, default: true },
     snipingExtensionMinutes: { type: Number, default: 2 },

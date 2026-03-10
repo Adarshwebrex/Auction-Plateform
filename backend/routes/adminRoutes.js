@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { protect } = require("../middlewares/authMiddleware.js");
-const { getAdminStats, getAdminInsights, updateUserRole, deleteUser, getUser } = require("../controllers/adminController.js");
+const { getAdminStats, getAdminInsights, updateUserRole, deleteUser, getUser, unbanUser } = require("../controllers/adminController.js");
 const { getAuditLogs } = require("../controllers/auditController.js");
 const User = require("../models/User.js");
 const Auction = require("../models/Auction.js");
@@ -114,6 +114,7 @@ router.get("/seller-rankings", protect, adminOnly, async (req, res) => {
       GET SINGLE USER
    ============================ */
 router.get("/users/:userId", protect, adminOnly, getUser);
+router.put("/users/:userId/unban", protect, adminOnly, unbanUser);
 
 /* ============================
       UPDATE USER ROLE

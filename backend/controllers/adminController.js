@@ -2,6 +2,7 @@ const User = require("../models/User.js");
 const Auction = require("../models/Auction.js");
 const Bid = require("../models/Bid.js");
 const Order = require("../models/Order.js");
+const AuditLog = require("../models/AuditLog.js");
 
 exports.getAdminStats = async (req, res) => {
   try {
@@ -176,5 +177,44 @@ exports.getUser = async (req, res) => {
   } catch (err) {
     console.error("GET USER ERROR:", err);
     res.status(500).json({ message: "Failed to fetch user" });
+  }
+};
+
+// UNBAN user (clear withdrawal ban & violations)
+exports.unbanUser = async (req, res) => {
+  try {
+    const id = req.params.userId;
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const before = {
+      bannedUntil: user.bannedUntil || null,
+      withdrawalViolationCount: user.withdrawalViolationCount || 0,
+    };
+
+    user.bannedUntil = null;
+    user.withdrawalViolationCount = 0;
+    await user.save();
+
+    try {
+      await AuditLog.create({
+        userId: req.user._id,
+        action: "update",
+        entityType: "user",
+        entityId: user._id,
+        before,
+        after: { bannedUntil: null, withdrawalViolationCount: 0 },
+        ip: (req.ip || ""),
+        userAgent: (req.headers["user-agent"] || ""),
+        route: req.originalUrl || "",
+        method: (req.method || "").toUpperCase(),
+      });
+    } catch (e) {}
+
+    const sanitized = await User.findById(id).select("-password");
+    res.json({ message: "User unbanned", user: sanitized });
+  } catch (err) {
+    console.error("UNBAN USER ERROR:", err);
+    res.status(500).json({ message: "Failed to unban user" });
   }
 };

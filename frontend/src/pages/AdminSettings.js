@@ -24,6 +24,9 @@ export default function AdminSettings() {
     requireKYCForHighValue: false,
     requireOTPForWithdrawals: false,
     freezeWithdrawals: false,
+    withdrawalDailyCap: 0,
+    withdrawalViolationLimit: 3,
+    autoBanDurationDays: 7,
     enableSnipingProtection: true,
     snipingExtensionMinutes: 2,
     maxAuctionsPerSeller: 50,
@@ -212,6 +215,29 @@ export default function AdminSettings() {
             onChange={(val) => handleChange("freezeWithdrawals", val)}
             description="Instantly blocks all withdrawals for non-admins"
           />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            <SettingInput
+              label="Per-Day Withdrawal Cap (₹)"
+              value={settings.withdrawalDailyCap}
+              type="number"
+              onChange={(val) => handleChange("withdrawalDailyCap", Number(val))}
+              description="0 = unlimited; blocks withdrawals exceeding this total in a day"
+            />
+            <SettingInput
+              label="Violation Threshold"
+              value={settings.withdrawalViolationLimit}
+              type="number"
+              onChange={(val) => handleChange("withdrawalViolationLimit", Number(val))}
+              description="Number of cap violations before auto-ban"
+            />
+            <SettingInput
+              label="Auto-Ban Duration (days)"
+              value={settings.autoBanDurationDays}
+              type="number"
+              onChange={(val) => handleChange("autoBanDurationDays", Number(val))}
+              description="Ban duration applied when threshold is hit"
+            />
+          </div>
         </div>
 
         <div className="pt-4">

@@ -24,6 +24,19 @@ export default function AdminUsers() {
     }
   }
 
+  async function unbanUser(userId) {
+    try {
+      setLoading(true);
+      await api.put(`/admin/users/${userId}/unban`);
+      toast.success("User unbanned");
+      loadUsers();
+    } catch (err) {
+      toast.error("Failed to unban user");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function updateRole(userId, newRole) {
     try {
       setLoading(true);
@@ -92,6 +105,7 @@ export default function AdminUsers() {
               <th className="p-4 text-left text-gray-300">Name</th>
               <th className="p-4 text-left text-gray-300">Email</th>
               <th className="p-4 text-left text-gray-300">Role</th>
+              <th className="p-4 text-left text-gray-300">Ban Status</th>
               <th className="p-4 text-center text-gray-300">Actions</th>
             </tr>
           </thead>
@@ -131,16 +145,42 @@ export default function AdminUsers() {
                     </select>
                   </td>
 
+                  {/* BAN STATUS */}
+                  <td className="p-4">
+                    {u.bannedUntil && new Date(u.bannedUntil) > new Date() ? (
+                      <div>
+                        <span className="px-2 py-0.5 text-xs rounded bg-red-600/20 border border-red-400/30 text-red-200">
+                          Banned until {new Date(u.bannedUntil).toLocaleString()}
+                        </span>
+                        <div className="text-xs text-gray-300 mt-1">Violations: {u.withdrawalViolationCount || 0}</div>
+                      </div>
+                    ) : (
+                      <span className="px-2 py-0.5 text-xs rounded bg-emerald-600/20 border border-emerald-400/30 text-emerald-200">Not Banned</span>
+                    )}
+                  </td>
+
                   {/* DELETE BUTTON */}
                   <td className="p-4 text-center">
-                    <button
-                      onClick={() => deleteUser(u._id)}
-                      disabled={loading}
-                      className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 
-                                 text-xs font-semibold transition disabled:opacity-50"
-                    >
-                      Delete
-                    </button>
+                    <div className="flex items-center gap-2 justify-center">
+                      {u.bannedUntil && new Date(u.bannedUntil) > new Date() ? (
+                        <button
+                          onClick={() => unbanUser(u._id)}
+                          disabled={loading}
+                          className="px-4 py-2 bg-yellow-600 rounded-lg hover:bg-yellow-700 
+                                     text-xs font-semibold transition disabled:opacity-50"
+                        >
+                          Unban
+                        </button>
+                      ) : null}
+                      <button
+                        onClick={() => deleteUser(u._id)}
+                        disabled={loading}
+                        className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 
+                                   text-xs font-semibold transition disabled:opacity-50"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </motion.tr>
               ))

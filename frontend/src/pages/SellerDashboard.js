@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useFormatCurrency } from "../utils/currency";
 
-// Neon Glow Keyframes (Tailwind-safe)
 const glowVariants = {
   initial: { opacity: 0, y: -10 },
   animate: {

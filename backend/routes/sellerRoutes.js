@@ -112,6 +112,24 @@ router.post(
 );
 
 // ---------------------------
+// GET KYC STATUS (ME)
+// ---------------------------
+router.get("/kyc/status", protect, sellerOnly, async (req, res) => {
+  try {
+    const latest = await KycSubmission.findOne({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .select("status createdAt reviewedAt note");
+    const user = await User.findById(req.user._id).select("kycVerified kycRequested");
+    res.json({
+      submission: latest || null,
+      user: user ? { kycVerified: !!user.kycVerified, kycRequested: !!user.kycRequested } : { kycVerified: false, kycRequested: false },
+    });
+  } catch (e) {
+    res.status(500).json({ message: "Failed to load KYC status" });
+  }
+});
+
+// ---------------------------
 // GET MY RANK
 // ---------------------------
 router.get("/my-rank", protect, sellerOnly, async (req, res) => {

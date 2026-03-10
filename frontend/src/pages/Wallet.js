@@ -23,6 +23,7 @@ export default function Wallet() {
   const [modalAmount, setModalAmount] = useState("");
   const [modalOtp, setModalOtp] = useState("");
   const [modalSubmitting, setModalSubmitting] = useState(false);
+  const [limits, setLimits] = useState({ dailyCap: 0, withdrawnToday: 0, remaining: null, bannedUntil: null });
 
   useEffect(() => {
     if (auth.token) {
@@ -31,6 +32,7 @@ export default function Wallet() {
       fetchActivity();
       fetchPending();
       fetchDecisions();
+      fetchLimits();
       const s = io("http://localhost:4000");
       if (auth.userId) s.emit("registerUser", auth.userId);
       const refresh = () => fetchWonAuctions();
@@ -94,6 +96,15 @@ export default function Wallet() {
     }
   };
 
+  const fetchLimits = async () => {
+    try {
+      const res = await api.get("/wallet/limits");
+      setLimits(res.data || {});
+    } catch (err) {
+      // ignore
+    }
+  };
+
   const handleGetOtp = async () => {
     try {
       const res = await api.post("/wallet/request-otp");
@@ -140,6 +151,7 @@ export default function Wallet() {
         await fetchBalance();
         await fetchActivity();
         await fetchDecisions();
+        await fetchLimits();
       }
       setModalOpen(false);
     } catch (err) {
@@ -147,6 +159,9 @@ export default function Wallet() {
       if (err?.response?.status === 401 && /OTP required/i.test(msg)) {
         setOtpRequired(true);
         toast.error("OTP required. Please enter the OTP sent to your email.");
+      } else if (err?.response?.status === 403) {
+        await fetchLimits();
+        toast.error(msg);
       } else {
         toast.error(msg);
       }
@@ -260,7 +275,7 @@ export default function Wallet() {
                        shadow-[0_0_25px_rgba(200,0,255,0.35)]
                        hover:brightness-110 transition"
             onClick={handleWithdraw}
-            disabled={!!settings?.maintenanceMode || !!settings?.freezeWithdrawals}
+            disabled={!!settings?.maintenanceMode || !!settings?.freezeWithdrawals || (!!limits?.bannedUntil && new Date(limits.bannedUntil) > new Date())}
           >
             Withdraw
           </motion.button>
@@ -287,6 +302,16 @@ export default function Wallet() {
         {settings?.freezeWithdrawals && !settings?.maintenanceMode ? (
           <p className="text-red-300 text-sm mt-2">
             Withdrawals are temporarily frozen by the admin.
+          </p>
+        ) : null}
+        {!!limits?.bannedUntil && new Date(limits.bannedUntil) > new Date() ? (
+          <p className="text-red-400 text-sm mt-2">
+            Your account is currently restricted from withdrawals until {new Date(limits.bannedUntil).toLocaleString()}.
+          </p>
+        ) : null}
+        {limits?.dailyCap > 0 ? (
+          <p className="text-cyan-300 text-sm mt-2">
+            Daily cap: ₹{Number(limits.dailyCap).toLocaleString('en-IN')} · Withdrawn today: ₹{Number(limits.withdrawnToday||0).toLocaleString('en-IN')} · Remaining: ₹{Number(limits.remaining||0).toLocaleString('en-IN')}
           </p>
         ) : null}
 

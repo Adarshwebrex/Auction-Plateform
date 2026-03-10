@@ -29,6 +29,9 @@ exports.updateSettings = async (req, res) => {
     "requireKYCForHighValue",
     "requireOTPForWithdrawals",
     "freezeWithdrawals",
+    "withdrawalDailyCap",
+    "withdrawalViolationLimit",
+    "autoBanDurationDays",
     // Anti-sniping and limits/support
     "enableSnipingProtection",
     "snipingExtensionMinutes",
@@ -80,6 +83,8 @@ exports.updateSettings = async (req, res) => {
           after,
           ip: (req.ip || ""),
           userAgent: (req.headers["user-agent"] || ""),
+          route: req.originalUrl || "",
+          method: (req.method || "").toUpperCase(),
         });
       }
     }

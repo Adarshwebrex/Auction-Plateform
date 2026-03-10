@@ -74,6 +74,15 @@ export default function Auctions() {
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch {}
   }, [page]);
 
+  // Keep page within bounds whenever total pages change
+  useEffect(() => {
+    setPage((p) => {
+      const max = Math.max(1, Number(pages) || 1);
+      const np = Math.min(Math.max(1, p), max);
+      return np;
+    });
+  }, [pages]);
+
   // Fetch data (debounced on search/page/filter changes) with stale-response guard
   useEffect(() => {
     setLoading(true);
@@ -104,8 +113,9 @@ export default function Auctions() {
             setTotal(data.length);
           } else {
             setItems(data.items || []);
-            setPages(data.pages || 1);
-            setTotal(data.total || 0);
+            // normalize numeric values in case backend sends strings
+            setPages(Number(data.pages) || 1);
+            setTotal(Number(data.total) || 0);
           }
         })
         .catch((e) => {
@@ -148,18 +158,18 @@ export default function Auctions() {
     <div className="relative min-h-screen bg-[#04010a] text-white px-6 pt-32 pb-20 overflow-hidden">
 
       {/* =============== CYBERPUNK CITY OVERLAY =============== */}
-      <div className="absolute inset-0  bg-[url('https://th.bing.com/th/id/OIP.tgh660d6GOZAiPP6clX9-QHaEK?w=327&h=183&c=7&r=0&o=7&cb=ucfimg2&dpr=1.2&pid=1.7&rm=3&ucfimg=1')]
+      <div className="absolute inset-0 -z-10 bg-[url('https://th.bing.com/th/id/OIP.tgh660d6GOZAiPP6clX9-QHaEK?w=327&h=183&c=7&r=0&o=7&cb=ucfimg2&dpr=1.2&pid=1.7&rm=3&ucfimg=1')]
                       bg-cover bg-center opacity-[0.18] pointer-events-none mix-blend-screen" />
 
       {/* =============== MYSTIC ARCANE FOG =============== */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(150,60,255,0.36),transparent_70%),
-                                        radial-gradient(circle_at_80%_80%,rgba(255,60,200,0.28),transparent_70%)] opacity-40" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(150,60,255,0.36),transparent_70%),
+                                        radial-gradient(circle_at_80%_80%,rgba(255,60,200,0.28),transparent_70%)] opacity-40 pointer-events-none" />
 
       {/* =============== CYBER RAIN STREAKS =============== */}
       {[...Array(40)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-[2px] h-[75px] bg-purple-400/30 blur-[1px]"
+          className="absolute -z-10 w-[2px] h-[75px] bg-purple-400/30 blur-[1px] pointer-events-none"
           initial={{ x: Math.random() * 2000, y: -200 }}
           animate={{ y: "1800px" }}
           transition={{
@@ -173,7 +183,7 @@ export default function Auctions() {
       {/* =============== FLOATING ARCANE RUNES =============== */}
       <motion.img
         src="https://th.bing.com/th/id/OIP.vI0cUZocC3Q7l9c8HKoWjwHaJR?w=146&h=183&c=7&r=0&o=7&cb=ucfimg2&dpr=1.2&pid=1.7&rm=3&ucfimg=1"
-        className="absolute top-1/2 left-1/2 w-[900px] -translate-x-1/2 -translate-y-1/2 opacity-[0.12] pointer-events-none select-none"
+        className="absolute -z-10 top-1/2 left-1/2 w-[900px] -translate-x-1/2 -translate-y-1/2 opacity-[0.12] pointer-events-none select-none"
         animate={{ rotate: 360 }}
         transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
       />
@@ -372,7 +382,7 @@ export default function Auctions() {
 
       {/* ================== PAGINATION ================== */}
       {!loading && !error && pages > 1 && (
-        <div className="max-w-7xl mx-auto mt-10 flex justify-center items-center gap-4">
+        <div className="relative z-10 max-w-7xl mx-auto mt-10 flex justify-center items-center gap-4">
           <button
             type="button"
             disabled={page <= 1}
@@ -390,7 +400,7 @@ export default function Auctions() {
             disabled={page >= pages}
             onClick={() => {
               console.debug('[Auctions] Next clicked. Current page=', page, 'of', pages);
-              setPage((p) => p + 1);
+              setPage((p) => Math.min(Number(pages) || 1, p + 1));
             }}
             className="px-4 py-2 rounded-lg bg-white/10 disabled:opacity-40"
           >

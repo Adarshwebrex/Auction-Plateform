@@ -8,6 +8,7 @@ export default function AdminAuditLogs() {
   const [pages, setPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState({});
 
   const [entityType, setEntityType] = useState("Auction");
   const [action, setAction] = useState("");
@@ -15,10 +16,13 @@ export default function AdminAuditLogs() {
   const [entityId, setEntityId] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [route, setRoute] = useState("");
+  const [ip, setIp] = useState("");
+  const [method, setMethod] = useState("");
 
   const query = useMemo(
-    () => ({ entityType, action, userId, entityId, from, to, page, limit: 25 }),
-    [entityType, action, userId, entityId, from, to, page]
+    () => ({ entityType, action, userId, entityId, from, to, route, ip, method, page, limit: 25 }),
+    [entityType, action, userId, entityId, from, to, route, ip, method, page]
   );
 
   useEffect(() => {
@@ -39,6 +43,27 @@ export default function AdminAuditLogs() {
     };
     run();
   }, [query]);
+
+  const exportCsv = async () => {
+    try {
+      const params = {};
+      Object.entries(query).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== "") params[k] = v;
+      });
+      const res = await api.get(`/admin/audit-logs`, {
+        params: { ...params, format: "csv", page: 1 },
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: "text/csv;charset=utf-8;" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `audit-logs-${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (e) {}
+  };
 
   return (
     <div className="relative min-h-screen pt-24 px-4 sm:px-6 text-white">
@@ -87,7 +112,13 @@ export default function AdminAuditLogs() {
               value: entityType,
               setter: setEntityType,
               type: "select",
-              options: [{ v: "", l: "Any" }, { v: "Auction", l: "Auction" }],
+              options: [
+                { v: "", l: "Any" },
+                { v: "Auction", l: "Auction" },
+                { v: "settings", l: "Settings" },
+                { v: "user", l: "User" },
+                { v: "order", l: "Order" },
+              ],
             },
             {
               label: "Action",
@@ -103,6 +134,22 @@ export default function AdminAuditLogs() {
             },
             { label: "User ID", value: userId, setter: setUserId, type: "input" },
             { label: "Entity ID", value: entityId, setter: setEntityId, type: "input" },
+            { label: "Route contains", value: route, setter: setRoute, type: "input" },
+            { label: "IP", value: ip, setter: setIp, type: "input" },
+            {
+              label: "Method",
+              value: method,
+              setter: setMethod,
+              type: "select",
+              options: [
+                { v: "", l: "Any" },
+                { v: "GET", l: "GET" },
+                { v: "POST", l: "POST" },
+                { v: "PUT", l: "PUT" },
+                { v: "DELETE", l: "DELETE" },
+                { v: "PATCH", l: "PATCH" },
+              ],
+            },
           ].map((f, i) => (
             <div key={i} className="flex flex-col">
               <label className="text-xs text-cyan-300 mb-1">{f.label}</label>
@@ -169,19 +216,27 @@ export default function AdminAuditLogs() {
             />
           </div>
 
-          {/* Apply Button */}
-          <button
-            onClick={() => setPage(1)}
-            className="
-              ml-auto px-5 py-2 rounded-xl 
-              bg-gradient-to-r from-cyan-600 to-purple-600 
-              border border-cyan-400/40
-              hover:shadow-[0_0_20px_rgba(0,200,255,0.5)]
-              transition-all
-            "
-          >
-            Apply
-          </button>
+          {/* Actions */}
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={() => setPage(1)}
+              className="
+                px-5 py-2 rounded-xl 
+                bg-gradient-to-r from-cyan-600 to-purple-600 
+                border border-cyan-400/40
+                hover:shadow-[0_0_20px_rgba(0,200,255,0.5)]
+                transition-all
+              "
+            >
+              Apply
+            </button>
+            <button
+              onClick={exportCsv}
+              className="px-5 py-2 rounded-xl bg-black/50 border border-cyan-400/30 hover:bg-cyan-500/10 transition"
+            >
+              Export CSV
+            </button>
+          </div>
         </div>
 
         {/* === LOG TABLE === */}
@@ -270,18 +325,43 @@ export default function AdminAuditLogs() {
                           {Object.keys(it.after || {}).length === 0 ? (
                             <div className="text-gray-400">No changes recorded</div>
                           ) : (
-                            Object.keys(it.after).map((k) => (
-                              <div key={k} className="flex items-start gap-2">
-                                <span className="text-cyan-300 min-w-[120px]">{k}</span>
-                                <span className="text-gray-500 line-through max-w-[220px] truncate">
-                                  {String((it.before || {})[k])}
-                                </span>
-                                <span className="text-cyan-400">→</span>
-                                <span className="text-white max-w-[260px] truncate">
-                                  {String((it.after || {})[k])}
-                                </span>
-                              </div>
-                            ))
+                            <>
+                              {Object.keys(it.after).map((k) => (
+                                <div key={k} className="flex items-start gap-2">
+                                  <span className="text-cyan-300 min-w-[120px]">{k}</span>
+                                  <span className="text-gray-500 line-through max-w-[220px] truncate">
+                                    {String((it.before || {})[k])}
+                                  </span>
+                                  <span className="text-cyan-400">→</span>
+                                  <span className="text-white max-w-[260px] truncate">
+                                    {String((it.after || {})[k])}
+                                  </span>
+                                </div>
+                              ))}
+                              <button
+                                className="mt-2 text-xs text-cyan-300 hover:text-cyan-200 underline"
+                                onClick={() => setExpanded((e)=>({ ...e, [it._id]: !e[it._id] }))}
+                              >
+                                {expanded[it._id] ? 'Hide details' : 'View details'}
+                              </button>
+                              {expanded[it._id] && (
+                                <div className="mt-2 grid grid-cols-12 gap-3 text-xs">
+                                  <div className="col-span-12 md:col-span-4 text-gray-400">
+                                    <div><span className="text-cyan-300">Route:</span> {it.route || '—'}</div>
+                                    <div><span className="text-cyan-300">Method:</span> {it.method || '—'}</div>
+                                    <div><span className="text-cyan-300">IP:</span> {it.ip || '—'}</div>
+                                  </div>
+                                  <div className="col-span-12 md:col-span-4">
+                                    <div className="text-cyan-300 mb-1">Before</div>
+                                    <pre className="bg-black/40 border border-cyan-400/20 rounded-lg p-2 overflow-auto max-h-48">{JSON.stringify(it.before || {}, null, 2)}</pre>
+                                  </div>
+                                  <div className="col-span-12 md:col-span-4">
+                                    <div className="text-cyan-300 mb-1">After</div>
+                                    <pre className="bg-black/40 border border-cyan-400/20 rounded-lg p-2 overflow-auto max-h-48">{JSON.stringify(it.after || {}, null, 2)}</pre>
+                                  </div>
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       )}

@@ -39,6 +39,9 @@ const userSchema = new mongoose.Schema(
     twoFactorOtpExpires: { type: Date, default: null },
     twoFactorLastSentAt: { type: Date, default: null },
     lastReauthAt: { type: Date, default: null },
+    // Policy enforcement
+    withdrawalViolationCount: { type: Number, default: 0 },
+    bannedUntil: { type: Date, default: null },
     storeBio: { type: String, default: "" },
     twitter: { type: String, default: "" },
     instagram: { type: String, default: "" },
