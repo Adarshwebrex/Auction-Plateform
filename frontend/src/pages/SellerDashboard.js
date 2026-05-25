@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { api } from "../utils/api";
 import SellerLayout from "../components/seller/SellerLayout";
 import { Link } from "react-router-dom";
@@ -45,9 +45,9 @@ export default function SellerDashboard() {
   // Load auctions on filters/pagination change
   useEffect(() => {
     fetchAuctions();
-  }, [page, search, statusFilter]);
+  }, [fetchAuctions]);
 
-  const fetchAuctions = async () => {
+  const fetchAuctions = useCallback(async () => {
     try {
       setLoadingAuctions(true);
       const q = new URLSearchParams();
@@ -64,7 +64,7 @@ export default function SellerDashboard() {
     } finally {
       setLoadingAuctions(false);
     }
-  };
+  }, [page, search, statusFilter, limit]);
 
   return (
     <SellerLayout>

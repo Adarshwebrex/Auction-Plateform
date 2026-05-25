@@ -48,6 +48,7 @@ const AddReview = lazy(() => import("./pages/AddReview"));
 const Payment = lazy(() => import("./pages/Payment"));
 const SellerJoin = lazy(() => import("./pages/SellerJoin"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
+const FeatureShowcase = lazy(() => import("./pages/FeatureShowcase"));
 const HowSellerWorks = lazy(() => import("./pages/HowSellerWorks"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const PaymentStatus = lazy(() => import("./pages/PaymentStatus"));
@@ -138,6 +139,7 @@ function App() {
         <Route path="/payment/:id" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment-status" element={<PaymentStatus />} />
+        <Route path="/features" element={<FeatureShowcase />} />
 
         {/* Chat Routes (full-page with sidebar) */}
         <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />

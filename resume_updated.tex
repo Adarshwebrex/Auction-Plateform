@@ -1,0 +1,347 @@
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez
+% Based off of: https://github.com/sb2nov/resume
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+% \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+%   \textbf{\href{http://sourabhbajaj.com/}{\Large Sourabh Bajaj}} & Email : \href{mailto:sourabh@sourabhbajaj.com}{sourabh@sourabhbajaj.com}\\
+%   \href{http://sourabhbajaj.com/}{http://www.sourabhbajaj.com} & Mobile : +1-123-456-7890 \\
+% \end{tabular*}
+
+\begin{center}
+\vspace{-1pt}
+    \textbf{\Huge \scshape Adarsh Kumar Chaudhari} \\ \vspace{1pt}
+    \small ‪+91 8707059003 $|$ \href{mailto:adchaudhari100@gmail.com}{\underline{adchaudhari100@gmail.com}} $|$ 
+    \href{https://www.linkedin.com/in/adarsh-kumar-chaudhari-6b820b279/}{\underline{Linkedin}} $|$
+    \href{https://github.com/Adarshch101}{\underline{Github}} $|$
+    \href{https://leetcode.com/u/adchaudhari100/}
+    {\underline{LeetCode}}  $|$
+    \href{https://adarsh-chaudhari-portfolio.vercel.app/}
+    {\underline{PortFolio}}
+\end{center}
+
+
+%-----------EDUCATION-----------
+\vspace{-15pt}
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Maharana Pratap Engineering College }{08/2023 - 08/2025}
+      {MCA}
+      {Kanpur, U.P.}
+
+        % \resumeSubheading
+         % {\textbf{CGPA: 8.39}}{}
+            
+
+  \resumeSubHeadingListEnd
+  \vspace{-4pt}
+   \resumeSubHeadingListStart
+    \resumeSubheading
+      {Lord Buddha P.G. College }{11/2018 - 05/2021}
+      {B.Sc}
+      {Bahraich, U.P.}
+
+        % \resumeSubheading
+        %  {\textbf{CGPA: 6}}{}
+            
+
+  \resumeSubHeadingListEnd
+\vspace{-13pt}
+
+\small{\textit{Passionate full-stack developer with expertise in building scalable web applications and real-time systems.}}
+\small{\textit{Focused on creating innovative e-commerce solutions with modern technologies and user-centric design.}}
+
+%-----------EXPERIENCE-----------
+% \section{Experience}
+%   \resumeSubHeadingListStart
+   
+% -----------Multiple Positions Heading-----------
+   % \resumeSubSubheading
+   %   {Machine Learning Intern}{Nov 2023 - Dec 2023}
+   %   {Exposys Data Labs}
+   %  \resumeItemListStart
+   %     \resumeItem
+   %       {served as a data science intern at Exposys Data Labs, contributing to a project that predicts a company's profit based on Research and Development spend, administration cost, and marketing spend inputs}
+   %  \resumeItemListEnd
+   % \resumeSubHeadingListEnd
+% --------------First Internship----------------------------------------
+    % \resumeSubheading
+    %   {Full Stack Web Developer}{06/2023 - 07/2023 }
+    %   {PantTech-e-learning}{Remote}
+      
+    %   \resumeItemListStart
+        % \resumeItem{Engineered an intuitive front-end to back-end linkage platform using Laravel, PostgreSQL database, and RESTful API, reducing lead time by 50 percent for integrating new data sources.}
+        % \resumeItem{During my Internship, I acquired a diverse skill set, including data analysis, content management, and digital advertising.I optimized website performance through testing, collaborated with cross-functional teams, and implemented strategies to enhance customer engagement.
+        % }
+        % \resumeItem{Led the development and implementation of other two web applications, significantly contributing to successful project outcomes.I'm skilled at creating attractive user interfaces that are easy to use, I also know how to use Git for managing code.}
+        % \resumeItem{Orchestrated seamless communication between front-end and back-end, integrating Rest API and optimizing data formatting; drove an impressive 65\% surge in user traffic, resulting in customer engagement and revenue growth.}
+    % \resumeItemListEnd
+   % ---------------------------------Second Internship-----------------------
+    % \resumeSubheading
+    %   {Machine Learning Intern}{08/2023 - 09/2023 }
+    %   {IIIT ALLAHABAD}{Remote}
+      
+    %   \resumeItemListStart
+    %     \resumeItem{Collaborated on a profit margin predictor application built using multiple regression models including Linear Regression, SVR, Lasso Regression, Neural Network Regression, KNN Regression and Random Forest Regression to predict profit margins effectively.}
+    %     \resumeItem{Managed a thorough startup financial dataset, ensuring data quality by scrupulously addressing missing values and implementing feature engineering techniques.}
+    %     % \resumeItem{Attained high accuracy in profit margin prediction, with notable success in models like Random Forest Regression, boasting an R-squared percentage of 91.03.}
+    % \resumeItemListEnd
+    % \vspace{-10pt}
+%-------------------------------------------
+%-----------PROGRAMMING SKILLS-----------
+\section{Technical Skills and Certificates}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+ \vspace{2pt}
+    \small{\item{
+     \textbf{Languages}{: C/C++, JavaScript, SQL,PL/SQL } \\
+     \textbf{Frameworks}{: React.js, Node.js, Express.js, Tailwind CSS, Socket.io} \\
+     % \textbf{Libraries}{: Pandas, Numpy, Matplotlib, Sklearn, Plotly, Tensorflow, PyTorch,Jupyter, OpenCV} \\
+     \textbf{Databases and Tools}{: MongoDB, SQL, MySQL, Stripe, Postman, Git, GitHub} \\
+     \textbf{Areas Of Interest}{: Full Stack Web Development, Real-time Applications}
+    }} \\
+    \textbf{Certificates}{: IBM-web development,C++ Certificate from Code Help}
+    }}
+    \end{itemize}
+    \vspace{-17pt}
+%--------------------------PROJECTS---------------------
+% \section{Experience}
+    % \resumeSubHeadingListStart
+    % \vspace{-3pt}
+
+% -------------------------------------------------------------
+  %    \resumeProjectHeading
+  % {\textbf{iONE IT Solutions pvt. ltd.} $|$ \emph{Software Programmer}} {{03/2025 - Present}}
+  % % {\href{https://github.com/yourusername/get-grants}{Project Link}}
+
+  % \resumeItemListStart
+  %   \vspace{3pt}
+  %   \resumeItem{Developed a \textbf{comprehensive government grant discovery platform} that allows users to explore and access \textbf{government schemes and funding opportunities} categorized \textbf{state-wise} and \textbf{category-wise}.}
+    
+  %   \resumeItem{Designed a \textbf{searchable, filter-based interface} enabling users to quickly locate relevant \textbf{grants, subsidies, and welfare programs} based on their location or eligibility.}
+    
+  %   \resumeItem{Built using \textbf{React.js} for \textbf{interactive UI components} and \textbf{Tailwind CSS} for a \textbf{responsive}, \textbf{modern design} optimized for performance across devices.}
+    
+  %   \resumeItem{Implemented a robust \textbf{Express.js} and \textbf{MongoDB} backend to manage grant data efficiently, ensuring \textbf{fast API responses}, \textbf{data consistency}, and \textbf{secure storage}.}
+  % \resumeItemListEnd
+
+
+          \vspace{-5pt}
+% -----------------------End of Project 1-----------------------
+      % \resumeProjectHeading
+      %     {\textbf{STOCK PREDICTION SYSTEM} $|$ \emph{Python, ML algorithms , API, Matplotlib,  flask, Streamlit}} 
+      %     {\href{https://github.com/Binay-tech1608/Stock_price_prediction}{Project Link}}
+          
+      %     \resumeItemListStart
+      %     \vspace{-1pt}
+      %       \resumeItem{Constructed a machine learning based stock price predicting system with python, streamlit, yfinance, prophet that helped in Predicting stock prices up to 4 Years.}
+      %       \resumeItem{Formulated secure protected Algorithm for user authentication, leading to a 20\% increase in user engagement and a 25\% reduction in unauthorized access and Predicting right data.}
+      %       \resumeItem{Applied Matplotlib data visualization to display collaboration and company data. leading to a 30\% reduction in user's time.}
+      %     \resumeItemListEnd
+      %    \vspace{-5pt}
+% **********************
+      % \resumeProjectHeading
+          % {\textbf{Video Chat App} $|$ \emph{HTML,CSS, JavaScript,Git}}
+          % {\href{paste here}{Project Link}}
+          
+          % \resumeItemListStart
+          %  \vspace{-2pt}
+          %   \resumeItem{Engineered a Real time Video Chatting app simultaneously see and chat with person with 85\% accuracy.}
+          %   \resumeItem{Published plugin to websites to enable Video Chat and Text Chat for user 50\% faster with minimum delay.}
+          %   \resumeItem{Remodelled real time feed using Webrtc, SocketIo and Peer 2 Peer connection.}
+          %   % \resumeItem{Used in some other libraries for smooth transitions and UI.}
+          % \resumeItemListEnd
+          % \vspace{-12pt}
+    % \resumeSubHeadingListEnd
+
+%
+\section{Projects}
+    % \resumeSubHeadingListStart
+    \vspace{-3pt}
+
+% **********************
+\resumeProjectHeading
+          {\textbf{AntiqueXX - E-Commerce Auction Platform} $|$ \emph{React, Node.js, MongoDB, Socket.io, Stripe}} 
+          {\href{https://github.com/Adarshch101/Auction-Platform}{Project Link}}
+         
+          \resumeItemListStart
+  \vspace{1pt}
+\resumeItem{Developed a \textbf{comprehensive MERN stack auction platform} with \textbf{real-time bidding}, \textbf{secure payments}, and \textbf{advanced analytics} for antique items and collectibles.}
+    \resumeItem{Implemented \textbf{real-time features} including live auction streaming, bid heatmaps, enhanced chat with typing indicators, and \textbf{WebSocket-based instant updates} using Socket.io.}
+    \resumeItem{Built \textbf{advanced UI/UX components} including 3D/AR product viewers, virtual showroom experiences, personalized dashboards, and \textbf{gamification systems} with achievements and leaderboards.}
+    \resumeItem{Designed \textbf{scalable backend architecture} with RESTful APIs, role-based access control, JWT authentication, and \textbf{Stripe payment integration} for secure transactions.}
+\resumeItemListEnd
+
+          \vspace{-2pt}
+% **********************
+\resumeProjectHeading
+          {\textbf{Study Notion } $|$ \emph{React,Tailwind CSS,expressJs,mongoDB,NodeJs}} 
+          % {\href{https://github.com/Binay-tech1608/Face-Unlocking-application-}{Project Link}}
+         
+          \resumeItemListStart
+  \vspace{1pt}
+\resumeItem{Built a \textbf{full-stack MERN e-learning platform} enabling \textbf{students} and \textbf{instructors} to engage through structured \textbf{courses}, \textbf{video lectures}, and \textbf{progress tracking}.}
+    % \resumeItem{Designed and implemented \textbf{course creation}, \textbf{content upload}, and \textbf{video management} modules for instructors using \textbf{RESTful APIs} and \textbf{MongoDB} for dynamic data storage.}
+    \resumeItem{Integrated secure \textbf{authentication (JWT)}, \textbf{authorization}, and a \textbf{payment gateway} to manage \textbf{premium course purchases} and access to \textbf{free content}.}
+    \resumeItem{Developed a \textbf{responsive UI} with \textbf{React.js} and \textbf{Tailwind CSS}, utilizing \textbf{state management}, \textbf{React Router}, and \textbf{conditional rendering} for seamless user experience.}
+    % \resumeItem{Deployed using \textbf{Node.js} and \textbf{Express.js} for backend services, ensuring \textbf{scalability}, \textbf{performance optimization}, and clean \textbf{API architecture}.}
+\resumeItemListEnd
+
+          \vspace{-2pt}
+% **********************
+        \resumeProjectHeading
+          {\textbf{Get a Friend(Pet adoption system) } $|$ \emph{Html,CSS, NodeJS, ExpressJS, MongoDB}} 
+          % {\href{https://github.com/Binay-tech1608/Face-Unlocking-application-}{Project Link}}
+         
+          \resumeItemListStart
+  \vspace{1pt}
+  \resumeItem{Built with \textbf{HTML}, \textbf{CSS}, and \textbf{JavaScript} to create a \textbf{responsive}, \textbf{user-friendly interface} where users can \textbf{browse adoptable pets}, \textbf{view profiles}, and interact with \textbf{intuitive navigation}.}
+  
+  \resumeItem{Powered by \textbf{Node.js} and \textbf{MongoDB} to manage \textbf{pet data}, \textbf{user registrations}, \textbf{adoption requests}, and \textbf{real-time updates}—ensuring a \textbf{smooth}, \textbf{data-driven platform} for both users and administrators.}
+\resumeItemListEnd
+
+          \vspace{-1pt}
+% **********************
+        \resumeProjectHeading
+          {\textbf{Take Exam } $|$ \emph{React,Tailwind,Express,SQL,MySql}} 
+          % {\href{https://github.com/Binay-tech1608/Face-Unlocking-application-}{Project Link}}
+         
+          \resumeItemListStart
+  \vspace{1pt}
+  \resumeItem{Developed a \textbf{full-stack web application} using \textbf{React}, \textbf{Tailwind CSS}, \textbf{Express.js}, and \textbf{MySQL} that enables \textbf{user authentication}, \textbf{role-based access control}, and dynamic \textbf{exam scheduling} by instructors and admins.}
+  
+  \resumeItem{Implemented features for \textbf{students} to take exams, view \textbf{results} and \textbf{leaderboards}, while instructors access \textbf{analytics} and manage exams. Includes a curated \textbf{study material module} covering \textbf{programming languages}, \textbf{databases}, and \textbf{frameworks}.}
+\resumeItemListEnd
+
+
+          \vspace{-1pt}
+%
+
+          \vspace{-5pt}
+
+
+
+    
+\section{Achievements}
+    % \resumeSubHeadingListStart\
+    \vspace{1pt}
+    \resumeItemListStart
+    \resumeItem{ \textbf{1450} Contest Rating in \textbf{LeetCode Contests}.}
+    % \resumeItem{Engaged in {\textbf{SOLING FOR INDIA}}  organized by Google India and competed till Regional round.}
+    \resumeItem{Solved {\textbf{700+}} problems in Leetcode.}
+    \resumeItem{Qualified {\textbf{IIT JAM}} with {\textbf{AIR 1306}} in Mathematics }
+
+    % \resumeItem{{\textbf{Winner}} of Intra IIIT Kalyani Cricket Tournament 2023-2024.}
+    \resumeItemListEnd
+ % \end{itemize}
+
+ \vspace{-10pt}
+    
+
+
+`
+%-------------------------------------------
+\end{document}

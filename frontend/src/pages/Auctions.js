@@ -2,7 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../utils/api";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiSearch, FiFilter } from "react-icons/fi";
+import { FiSearch, FiFilter, FiX } from "react-icons/fi";
+import { AuctionCardSkeleton, CardSkeleton } from "../components/ui/Skeleton";
+import { PageLoader, InlineLoader } from "../components/ui/LoadingSpinner";
+import { MobileSearchBar, MobileFilterPanel, MobileBidCard, MobileBottomNav, useSwipeGestures } from "../components/ui/MobileOptimized";
+import { toast } from "react-hot-toast";
 
 export default function Auctions() {
   const [items, setItems] = useState([]);
@@ -29,6 +33,25 @@ export default function Auctions() {
   // Compare & Shipping prefs
   const [compareIds, setCompareIds] = useState([]);
   const [locationPin, setLocationPin] = useState("");
+
+  // Mobile-specific states
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [activeBottomNav, setActiveBottomNav] = useState('browse');
+  
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // Mobile gesture handling
+  const swipeHandlers = useSwipeGestures(
+    () => setShowMobileFilters(true), // Swipe left to open filters
+    () => setShowMobileFilters(false) // Swipe right to close filters
+  );
 
   useEffect(() => {
     try {

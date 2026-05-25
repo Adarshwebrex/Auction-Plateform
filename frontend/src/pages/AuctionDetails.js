@@ -8,6 +8,10 @@ import { toast } from "react-hot-toast";
 import { useSettings } from "../context/SettingsContext";
 import { useFormatCurrency } from "../utils/currency";
 import Modal from "../components/ui/Modal";
+import LiveAuctionStream from "../components/live/LiveAuctionStream";
+import ARViewer from "../components/experience/ARViewer";
+import EnhancedChat from "../components/chat/EnhancedChat";
+import AuctionAnalytics from "../components/analytics/AuctionAnalytics";
 
 let socket;
 
@@ -38,6 +42,9 @@ export default function AuctionDetails() {
   const [outbid, setOutbid] = useState(false);
   const [urgent, setUrgent] = useState(false);
   const [wishPulse, setWishPulse] = useState(false);
+  const [showARViewer, setShowARViewer] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [activeTab, setActiveTab] = useState('details'); // details, stream, analytics, chat
 
   // FETCH DATA
   useEffect(() => {
@@ -367,6 +374,31 @@ export default function AuctionDetails() {
         {auction.category}
       </p>
 
+      {/* NEW FEATURE TABS */}
+      <div className="relative z-10 mt-6">
+        <div className="flex space-x-1 bg-white/5 rounded-lg p-1 backdrop-blur-sm border border-white/10">
+          {[
+            { id: 'details', label: 'Details', icon: 'info' },
+            { id: 'stream', label: 'Live Stream', icon: 'video' },
+            { id: 'analytics', label: 'Analytics', icon: 'chart' },
+            { id: 'chat', label: 'Chat', icon: 'message' },
+            { id: 'ar', label: '3D/AR View', icon: 'cube' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 px-4 py-2 rounded-md transition-all text-sm font-medium ${
+                activeTab === tab.id
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                  : 'text-white/60 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* MAIN GRID */}
       <div className="relative z-10 mt-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
 
@@ -612,6 +644,34 @@ export default function AuctionDetails() {
             </div>
           </div>
 
+          {/* QUICK ACTIONS */}
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className="px-4 py-2 bg-purple-600/20 border border-purple-500/50 text-purple-300 rounded-lg hover:bg-purple-600/30 transition-colors text-sm font-medium"
+            >
+              View Analytics
+            </button>
+            <button
+              onClick={() => setActiveTab('ar')}
+              className="px-4 py-2 bg-blue-600/20 border border-blue-500/50 text-blue-300 rounded-lg hover:bg-blue-600/30 transition-colors text-sm font-medium"
+            >
+              3D/AR View
+            </button>
+            <button
+              onClick={() => setActiveTab('stream')}
+              className="px-4 py-2 bg-green-600/20 border border-green-500/50 text-green-300 rounded-lg hover:bg-green-600/30 transition-colors text-sm font-medium"
+            >
+              Live Stream
+            </button>
+            <button
+              onClick={() => setActiveTab('chat')}
+              className="px-4 py-2 bg-orange-600/20 border border-orange-500/50 text-orange-300 rounded-lg hover:bg-orange-600/30 transition-colors text-sm font-medium"
+            >
+              Join Chat
+            </button>
+          </div>
+
           {/* YOUR BIDS */}
           {auth?.token && (
             <div className="mt-8">
@@ -674,6 +734,79 @@ export default function AuctionDetails() {
         </motion.div>
       </div>
 
+      {/* NEW FEATURE TAB CONTENT */}
+      <div className="relative z-10 mt-10">
+        {activeTab === 'details' && (
+          <div className="text-center text-white/60 py-8">
+            <p>Original auction details are shown above</p>
+          </div>
+        )}
+
+        {activeTab === 'stream' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <h2 className="text-2xl font-bold text-white">Live Auction Stream</h2>
+            <LiveAuctionStream 
+              auctionId={id}
+              isLive={auction?.status === 'active'}
+              onStreamStart={() => toast.success('Stream started')}
+              onStreamEnd={() => toast.info('Stream ended')}
+            />
+          </motion.div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <h2 className="text-2xl font-bold text-white">Auction Analytics</h2>
+            <AuctionAnalytics 
+              auctionId={id}
+              timeRange="7d"
+            />
+          </motion.div>
+        )}
+
+        {activeTab === 'chat' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <h2 className="text-2xl font-bold text-white">Live Auction Chat</h2>
+            <EnhancedChat 
+              auctionId={id}
+              userId={auth?.user?.id || 'guest'}
+              userName={auth?.user?.name || 'Guest User'}
+            />
+          </motion.div>
+        )}
+
+        {activeTab === 'ar' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <h2 className="text-2xl font-bold text-white">3D/AR Product View</h2>
+            <div className="bg-white/5 rounded-lg p-6 border border-white/10">
+              <p className="text-white/60 mb-4">Experience this item in 3D and Augmented Reality</p>
+              <button
+                onClick={() => setShowARViewer(true)}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Open 3D/AR Viewer
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </div>
+
       {/* Sticky mini-timer for urgency */}
       {isAuction && urgent && auction?.status === 'active' && timeLeft !== 'Ended' && (
         <div className="fixed bottom-6 right-6 z-40 px-4 py-2 rounded-full bg-red-600 text-white shadow-lg animate-pulse">
@@ -712,6 +845,15 @@ export default function AuctionDetails() {
           );
         })()}
       </Modal>
+
+      {/* AR Viewer Modal */}
+      {showARViewer && (
+        <ARViewer
+          auction={auction}
+          images={Array.isArray(auction.images) && auction.images.length > 0 ? auction.images : [auction.image]}
+          onClose={() => setShowARViewer(false)}
+        />
+      )}
     </div>
   );
 }
